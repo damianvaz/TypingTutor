@@ -27,18 +27,18 @@ public class KeyboardKeyBindings
 	static String mode = "";
 	static ReadStringList r = new ReadStringList();
 	static Scanner input;
-	static JPanel gamePanel;
-	public KeyboardKeyBindings(Keyboard kb, JTextArea ta, String m, JPanel gp)
+	static CenterPanel centerPanel;
+	public KeyboardKeyBindings(Keyboard kb, CenterPanel cP, String m)
 	{
 		keyboard = kb;
-		textArea = ta;
+		textArea = cP.textArea;
 		textArea.setTabSize(4);
+		centerPanel = cP;
 		mode = m;
 		r.openFile();
 		input = r.getStringList();
-		gamePanel = gp;
 		input.useDelimiter("\n");
-
+		centerPanel.setTextPane(input.next());
 		
 		//disable keybindings for textArea, for it to work on the keyboard JPanel.
 		InputMap textIm = textArea.getInputMap();
@@ -70,10 +70,7 @@ public class KeyboardKeyBindings
 		InputMap im = keyboard.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap ap = keyboard.getActionMap();
 		String releasedId = "released " + keyText;
-		
-		JButton alt = new JButton();
-		boolean isALLTGRPressed = false;
-		
+				
 		//default action for pressed keys
 		AbstractAction pressedAction = new AbstractAction()
 		{
@@ -119,38 +116,20 @@ public class KeyboardKeyBindings
 							JOptionPane.showMessageDialog(null, "You typed: " + text, "Score", JOptionPane.DEFAULT_OPTION);
 							textArea.setText("");
 							
-							String stringGameFromList = "";
+							String phraseFromList;
 							if (input.hasNext())
 							{
-								stringGameFromList = input.next();
+								phraseFromList = input.next();
 							}
-							String htmlTextBegin = "<html><b style='color: red;'>";
-							String htmlTextEnd   = "</b></html>";
-							JTextPane textPane = new JTextPane();
-							JPanel anotherGamePanel = new JPanel();
-							textPane.setContentType("text/html");
-							textPane.setText(htmlTextBegin + stringGameFromList + htmlTextEnd);
-							textPane.setEditable(false);
-							textPane.setMaximumSize(new Dimension(200,20));
-							textPane.setPreferredSize(new Dimension(200, 20));
-							textPane.setBackground(Color.BLACK);
+							else
+							{
+								JOptionPane.showMessageDialog(null, "The phrases List is Over, well done!\n Try uploading your own list of phrases next", "ListOver", JOptionPane.DEFAULT_OPTION);
+								phraseFromList = "List is Over :)";
+							}
 							
-							// Creating Border for Game Panel
-							Border insideBorder = BorderFactory.createTitledBorder("Type the phrase and press Enter:");
-							Border outsideBorder = BorderFactory.createEmptyBorder(20, 20, 20, 20);
-							anotherGamePanel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
-										
-							//Adding JTextPane to gamePanel and gamePanel to Vertical Box
-							Box verticalBox = new Box(BoxLayout.PAGE_AXIS);
-							anotherGamePanel.add(textPane);
-							verticalBox.add(textArea);
-							verticalBox.add(anotherGamePanel);
-							
-							
-							gamePanel.removeAll();
-							gamePanel.add(verticalBox);
-							gamePanel.revalidate();
-							gamePanel.repaint();
+							centerPanel.setTextPane(phraseFromList);
+							centerPanel.gamePanel.revalidate();
+							centerPanel.gamePanel.repaint();
 							
 						}
 						else
