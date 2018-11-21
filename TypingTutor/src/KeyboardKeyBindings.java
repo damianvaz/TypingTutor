@@ -37,7 +37,8 @@ public class KeyboardKeyBindings
 		mode = m;
 		r.openFile();
 		input = r.getStringList();
-		input.useDelimiter("\n");
+		String breakLineCode = System.getProperty("line.separator");
+		input.useDelimiter(breakLineCode);
 		centerPanel.setTextPane(input.next());
 		
 		//disable keybindings for textArea, for it to work on the keyboard JPanel.
@@ -112,8 +113,18 @@ public class KeyboardKeyBindings
 						keyButton.setForeground(Color.WHITE);
 						if (mode.equals("Game Mode"))
 						{
-							String text = textArea.getText();
-							JOptionPane.showMessageDialog(null, "You typed: " + text, "Score", JOptionPane.DEFAULT_OPTION);
+							String textTyped = textArea.getText();
+							String panelString = centerPanel.textOnPanel;
+							String message;
+							if (textTyped.equals(panelString))
+							{
+								message = "Congratulations!!!\n Text typed correctly";
+							}
+							else
+							{
+								message = ":( Try the next one";
+							}
+							JOptionPane.showMessageDialog(null, message, "Score", JOptionPane.DEFAULT_OPTION);
 							textArea.setText("");
 							
 							String phraseFromList;

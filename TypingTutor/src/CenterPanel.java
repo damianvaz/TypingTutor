@@ -17,7 +17,9 @@ public class CenterPanel extends JPanel
 	public JTextArea textArea;
 	public JTextPane textPane;
 	public JPanel gamePanel;
+	public String textOnPanel;
 	private Box verticalBox;
+	
 
 	public CenterPanel()
 	{
@@ -54,18 +56,23 @@ public class CenterPanel extends JPanel
 		textPane = new JTextPane();
 		textPane.setContentType("text/html");
 		textPane.setEditable(false);
-		textPane.setMaximumSize(new Dimension(200, 20));
-		textPane.setPreferredSize(new Dimension(200, 20));
+		//textPane.setMaximumSize(new Dimension(200, 20));
+		//textPane.setPreferredSize(new Dimension(200, 20));
 		textPane.setBackground(Color.BLACK);
 	}
 
 	public void setTextPane(String phrase)
 	{
+		textOnPanel = phrase;
 		gamePanel.removeAll();
 		makeJTextPane();
 		String htmlBegin = "<html><b style='color: red;'>";
 		String htmlEnd = "</b></html>";
 		textPane.setText(htmlBegin + phrase + htmlEnd);
 		gamePanel.add(textPane);
+	}
+	public String getString()
+	{
+		return textOnPanel;
 	}
 }
