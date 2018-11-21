@@ -27,12 +27,11 @@ public class MenuBar extends JMenuBar
 	private JRadioButtonMenuItem modeButtons[];
 	private Keyboard keyboard;
 	private KeyboardKeyBindings keybindings;
-	private JTextArea textArea;
-	private JPanel panel;
 	private JFrame frame;
 	private ButtonGroup keyboardLayoutButtonGroup;
 	private ButtonGroup modeButtonGroup;
 	private String mode;
+	private CenterPanel centerPanel;
 	String[] history =
 	{ "aloalo", "Marciano", "de boa na lagoa" };
 	private final String[] LAYOUTS =
@@ -40,14 +39,13 @@ public class MenuBar extends JMenuBar
 	private final String[] MODES =
 	{ "Free mode", "Game Mode" };
 
-	public MenuBar(Keyboard keyboard, KeyboardKeyBindings keybindings, JTextArea textArea, JPanel panel, JFrame frame)
+	public MenuBar(Keyboard keyboard, KeyboardKeyBindings keybindings, CenterPanel centerPanel, JFrame frame)
 	{
 		this.keyboard = keyboard;
-		this.textArea = textArea;
-		this.panel = panel;
 		this.frame = frame;
+		this.centerPanel = centerPanel;
 		mode = "Free mode";
-		keybindings = new KeyboardKeyBindings(keyboard, textArea, mode, panel);
+		keybindings = new KeyboardKeyBindings(keyboard, centerPanel, mode);
 		// create File Menu
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
@@ -135,7 +133,7 @@ public class MenuBar extends JMenuBar
 					keyboard.setKeyboard(LAYOUTS[i]);
 					keyboard.revalidate();
 					keyboard.repaint();
-					keybindings = new KeyboardKeyBindings(keyboard, textArea, mode, panel);
+					keybindings = new KeyboardKeyBindings(keyboard, centerPanel, mode);
 					break;
 				}
 			}
@@ -145,49 +143,24 @@ public class MenuBar extends JMenuBar
 	{
 		@Override
 		public void itemStateChanged(ItemEvent e)
-		{
-			// Creating JTextPane
-			String htmlText = "<html><div style='color: red;'>ALO ALO MARCIANO</html>";
-			JTextPane textPane = new JTextPane();
-			JPanel gamePanel = new JPanel();
-			textPane.setContentType("text/html");
-			textPane.setText(htmlText);
-			textPane.setEditable(false);
-			textPane.setMaximumSize(new Dimension(200,20));
-			textPane.setPreferredSize(new Dimension(200, 20));
-			textPane.setBackground(Color.BLACK);
-			
-			// Creating Border for Game Panel
-			Border insideBorder = BorderFactory.createTitledBorder("Type the phrase and press Enter:");
-			Border outsideBorder = BorderFactory.createEmptyBorder(20, 20, 20, 20);
-			gamePanel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
-						
-			//Adding JTextPane to gamePanel and gamePanel to Vertical Box
-			Box verticalBox = new Box(BoxLayout.PAGE_AXIS);
-			gamePanel.add(textPane);
-			verticalBox.add(textArea);
-			verticalBox.add(gamePanel);
-			
-			
-			
+		{				
 			if(modeButtons[0].isSelected())
 			{
 				mode = modeButtons[0].getText();
-				keybindings = new KeyboardKeyBindings(keyboard, textArea, mode, panel);
-				gamePanel.setVisible(false);
+				keybindings = new KeyboardKeyBindings(keyboard, centerPanel, mode);
+				centerPanel.gamePanel.setVisible(false);
 			}
 			if(modeButtons[1].isSelected())
 			{
 				mode = modeButtons[1].getText();
-				keybindings = new KeyboardKeyBindings(keyboard, textArea, mode, panel);
-				gamePanel.setVisible(true);
+				keybindings = new KeyboardKeyBindings(keyboard, centerPanel, mode);
+				JOptionPane.showMessageDialog(null, "Welcome to GAME MODE\n to play type the text and press Enter", "GAME MODE", JOptionPane.WARNING_MESSAGE);
+				centerPanel.gamePanel.setVisible(true);
 			}
 			
 			// Update panel content
-			panel.removeAll();
-			panel.add(verticalBox);
-			panel.revalidate();
-			panel.repaint();
+			centerPanel.revalidate();
+			centerPanel.repaint();
 			frame.pack();
 			
 		}
