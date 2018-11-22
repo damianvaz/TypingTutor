@@ -56,9 +56,7 @@ public class CenterPanel extends JPanel
 		textPane = new JTextPane();
 		textPane.setContentType("text/html");
 		textPane.setEditable(false);
-		//textPane.setMaximumSize(new Dimension(200, 20));
-		//textPane.setPreferredSize(new Dimension(200, 20));
-		textPane.setBackground(Color.BLACK);
+		textPane.setBackground(Color.LIGHT_GRAY);
 	}
 
 	public void setTextPane(String phrase)

@@ -28,6 +28,7 @@ public class KeyboardKeyBindings
 	static ReadStringList r = new ReadStringList();
 	static Scanner input;
 	static CenterPanel centerPanel;
+	int wrongKeyPressed, rightKeyPressed;
 	public KeyboardKeyBindings(Keyboard kb, CenterPanel cP, String m)
 	{
 		keyboard = kb;
@@ -40,6 +41,8 @@ public class KeyboardKeyBindings
 		String breakLineCode = System.getProperty("line.separator");
 		input.useDelimiter(breakLineCode);
 		centerPanel.setTextPane(input.next());
+		wrongKeyPressed = 0;
+		rightKeyPressed = 0;
 		
 		//disable keybindings for textArea, for it to work on the keyboard JPanel.
 		InputMap textIm = textArea.getInputMap();
@@ -65,7 +68,34 @@ public class KeyboardKeyBindings
 			}
 		}			
 	}
-	
+	public static void checkKeyPressed()
+	{
+		String textTyped = textArea.getText();
+		int length = textTyped.length();
+		centerPanel.textPane.setBackground(Color.LIGHT_GRAY);
+		String gameText = centerPanel.textOnPanel;
+		if(length <= gameText.length())
+		{
+			if(gameText.substring(0, length).equals(textTyped))
+			{
+				String htmlBegin = "<html><b style='color: green;'>";
+				String bTagEnd   = "</b>";
+				String htmlEnd   = "</b></html>";
+				centerPanel.textPane.setText(htmlBegin + gameText.substring(0, length) 
+												+ bTagEnd + "<b style='color: red;'>" 
+												+ gameText.substring(length, gameText.length()) + htmlEnd);
+			//	centerPanel.textPane.setBackground(Color.GREEN);
+				centerPanel.revalidate();
+				centerPanel.repaint();
+			}
+		}
+		else
+		{
+			centerPanel.revalidate();
+			centerPanel.repaint();
+		}
+		
+	}
 	public static void addKeyBinding(JButton keyButton, String keyText, String actionId)
 	{
 		InputMap im = keyboard.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -92,6 +122,8 @@ public class KeyboardKeyBindings
 				//set de default color for buttons
 				keyButton.setBackground(null);
 				keyButton.setForeground(null);
+				checkKeyPressed();
+				
 			}
 		};
 		
@@ -267,8 +299,8 @@ public class KeyboardKeyBindings
 							column = caretPosition - textArea.getLineStartOffset(row);
 						} catch (BadLocationException e1)
 						{
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
+							textArea.setCaretPosition(0);
 						}
 						if(row > 0)
 						{
@@ -310,7 +342,8 @@ public class KeyboardKeyBindings
 							column = caretPosition - textArea.getLineStartOffset(row);
 						} catch (BadLocationException e1)
 						{
-							// do nothing
+							textArea.setCaretPosition(textArea.getText().length());
+							e1.printStackTrace();
 						}
 						catch (Exception IllegalArgumentException)
 						{
@@ -359,7 +392,7 @@ public class KeyboardKeyBindings
 						keyButton.setForeground(Color.WHITE);
 						// since we disabled the textArea keybinding we have to perform it here the action there
 						int position = textArea.getCaretPosition();
-						if (position > 0 && position < textArea.getText().length())
+						if (position >= 0 && position < textArea.getText().length())
 						{
 							textArea.setCaretPosition(++position);
 						}
