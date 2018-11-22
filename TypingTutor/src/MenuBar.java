@@ -155,7 +155,7 @@ public class MenuBar extends JMenuBar
 				centerPanel.textArea.setText("");
 				mode = modeButtons[1].getText();
 				keybindings = new KeyboardKeyBindings(keyboard, centerPanel, mode);
-				JOptionPane.showMessageDialog(null, "<Welcome to GAME MODE\n to play type the text and press Enter", "GAME MODE", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Welcome to GAME MODE\n to play type the text and press Enter", "GAME MODE", JOptionPane.WARNING_MESSAGE);
 				centerPanel.gamePanel.setVisible(true);
 			}
 			

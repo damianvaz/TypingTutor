@@ -28,7 +28,8 @@ public class KeyboardKeyBindings
 	static ReadStringList r = new ReadStringList();
 	static Scanner input;
 	static CenterPanel centerPanel;
-	int wrongKeyPressed, rightKeyPressed;
+	static int wrongKeyPressed, rightKeyPressed;
+	static int lengthBefore = 0;
 	public KeyboardKeyBindings(Keyboard kb, CenterPanel cP, String m)
 	{
 		keyboard = kb;
@@ -74,23 +75,34 @@ public class KeyboardKeyBindings
 		int length = textTyped.length();
 		centerPanel.textPane.setBackground(Color.LIGHT_GRAY);
 		String gameText = centerPanel.textOnPanel;
-		if(length <= gameText.length())
+		if (mode.equals("Game Mode"))
 		{
-			if(gameText.substring(0, length).equals(textTyped))
+			if(length <= gameText.length())
 			{
-				String htmlBegin = "<html><b style='color: green;'>";
-				String bTagEnd   = "</b>";
-				String htmlEnd   = "</b></html>";
-				centerPanel.textPane.setText(htmlBegin + gameText.substring(0, length) 
-												+ bTagEnd + "<b style='color: red;'>" 
-												+ gameText.substring(length, gameText.length()) + htmlEnd);
-			//	centerPanel.textPane.setBackground(Color.GREEN);
-				centerPanel.revalidate();
-				centerPanel.repaint();
+				if(gameText.substring(0, length).equals(textTyped))
+				{
+					String htmlBegin = "<html><b style='color: green;'>";
+					String bTagEnd   = "</b>";
+					String htmlEnd   = "</b></html>";
+					centerPanel.textPane.setText(htmlBegin + gameText.substring(0, length) 
+													+ bTagEnd + "<b style='color: red;'>" 
+													+ gameText.substring(length, gameText.length()) + htmlEnd);
+					// if the text increase
+					if (length > lengthBefore)
+					{
+						rightKeyPressed++;
+					}
+				}
+				else
+				{
+					wrongKeyPressed++;
+				}
 			}
-		}
-		else
-		{
+			else
+			{
+				wrongKeyPressed++;
+			}
+			lengthBefore = length;
 			centerPanel.revalidate();
 			centerPanel.repaint();
 		}
@@ -143,6 +155,7 @@ public class KeyboardKeyBindings
 						int caretPosition = textArea.getCaretPosition();
 						keyButton.setBackground(Color.BLACK);
 						keyButton.setForeground(Color.WHITE);
+						
 						if (mode.equals("Game Mode"))
 						{
 							String textTyped = textArea.getText();
@@ -150,25 +163,28 @@ public class KeyboardKeyBindings
 							String message;
 							if (textTyped.equals(panelString))
 							{
-								message = "Congratulations!!!\n Text typed correctly";
+								message = "Congratulations!!!\n Text typed correctly\n Number of Keys Pressed wrong: " + wrongKeyPressed + "\nNumber of keys pressed right: " + rightKeyPressed;
 							}
 							else
 							{
-								message = ":( Try the next one";
+								message = ":( Try the next one\n\n \n Number of Keys Pressed wrong: " + wrongKeyPressed + "\nNumber of keys pressed right: " + rightKeyPressed;
 							}
-							JOptionPane.showMessageDialog(null, message, "Score", JOptionPane.DEFAULT_OPTION);
-							textArea.setText("");
 							
 							String phraseFromList;
 							if (input.hasNext())
 							{
+								JOptionPane.showMessageDialog(null, message, "Score", JOptionPane.DEFAULT_OPTION);
+								textArea.setText("");
 								phraseFromList = input.next();
 							}
 							else
 							{
-								JOptionPane.showMessageDialog(null, "The phrases List is Over, well done!\n Try uploading your own list of phrases next", "ListOver", JOptionPane.DEFAULT_OPTION);
+								JOptionPane.showMessageDialog(null, "The phrases List is Over, well done!\n Try uploading your own list of phrases next\n\n" + message, "ListOver", JOptionPane.DEFAULT_OPTION);
 								phraseFromList = "List is Over :)";
 							}
+							
+							wrongKeyPressed = 0;
+							rightKeyPressed = 0;
 							
 							centerPanel.setTextPane(phraseFromList);
 							centerPanel.gamePanel.revalidate();
@@ -434,6 +450,10 @@ public class KeyboardKeyBindings
 								int second = caretPosition;
 								textArea.setText(text.substring(0, first) + text.substring(second, length));
 								textArea.setCaretPosition(first);
+							}
+							else if(caretPosition <= 0)
+							{
+								// do nothing
 							}
 							else
 							{
